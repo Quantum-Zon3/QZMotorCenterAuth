@@ -1,6 +1,8 @@
-package com.Quantum.QZMotorCenterAuth.config;
+package com.Quantum.QZMotorCenterAuth.config.security;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -9,17 +11,32 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET = "mi_clave_secreta_super_larga_123456789";
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration}")
+    private long expiration;
+
+    @Value("${jwt.refresh-expiration}")
+    private long refreshExpiration;
 
     private Key getKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String generateToken(String email) {
+        return buildToken(email, expiration);
+    }
+
+    public String generateRefreshToken(String email) {
+        return buildToken(email, refreshExpiration);
+    }
+
+    private String buildToken(String email, long expirationTime) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hora
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getKey())
                 .compact();
     }
@@ -37,7 +54,7 @@ public class JwtService {
         try {
             extractUsername(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }

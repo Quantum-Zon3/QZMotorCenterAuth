@@ -1,0 +1,9 @@
+{
+  "cedula": 1001,
+  "nombre": "Carlos",
+  "apellido": "Docker",
+  "email": "carlos.docker@test.com",
+  "contraseña": "Password123",
+  "telefono": "555-9876",
+  "fechaRegistro": "2026-04-13T12:00:00"
+}

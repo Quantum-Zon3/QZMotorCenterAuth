@@ -20,13 +20,17 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
 
+                .cors(cors -> {}) //
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/qzwork_hub/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/qzwork_hub/auth").permitAll()
+                        .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ASYNC, jakarta.servlet.DispatcherType.ERROR).permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/qzwork_hub/auth", "/qzwork_hub/auth/").permitAll()
+                        .requestMatchers("/qzwork_hub/auth/login", "/qzwork_hub/auth/logout", "/qzwork_hub/auth/refresh-token").permitAll()
                         .anyRequest().authenticated()
                 )
 

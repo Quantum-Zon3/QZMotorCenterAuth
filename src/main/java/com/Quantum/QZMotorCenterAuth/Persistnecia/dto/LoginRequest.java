@@ -1,4 +1,4 @@
-package com.quantumzone.QZ_Workhub.dominio.dto;
+package com.Quantum.QZMotorCenterAuth.persistnecia.dto;
 
 import lombok.Data;
 

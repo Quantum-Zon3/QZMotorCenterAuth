@@ -1,4 +1,48 @@
 package com.Quantum.QZMotorCenterAuth.persistnecia.dao;
+import com.Quantum.QZMotorCenterAuth.persistnecia.dto.UsuarioDto;
+import com.Quantum.QZMotorCenterAuth.persistnecia.entidad.Usuario;
+import com.Quantum.QZMotorCenterAuth.persistnecia.mapper.UsuarioMapper;
+import com.Quantum.QZMotorCenterAuth.persistnecia.repositorio.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
-public class UsuarioDao {
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+@RequiredArgsConstructor
+public class UsuarioDAO {
+    private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
+
+    public UsuarioDto save(UsuarioDto usuarioDto) {
+        Usuario usuario = usuarioMapper.toUsuario(usuarioDto);
+        usuarioRepository.save(usuario);
+        return usuarioMapper.toUsuarioDto(usuario);
+    }
+
+    public Optional<UsuarioDto> findById(Long id) {
+        return usuarioRepository.findById(id).map(usuarioMapper::toUsuarioDto);
+    }
+
+    public List<UsuarioDto> findAll() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        return usuarioMapper.toUsuarioDtos(usuarios);
+    }
+
+    public Optional<UsuarioDto> update(Long id, UsuarioDto usuarioDto) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuarioMapper.updateUsuario(usuarioDto, usuario);
+            Usuario usuarioActualizado = usuarioRepository.save(usuario);
+            return usuarioMapper.toUsuarioDto(usuarioActualizado);
+        });
+    }
+
+    public boolean delete(Long id) {
+        if (usuarioRepository.existsById(id)) {
+            usuarioRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
